@@ -1,5 +1,8 @@
 {
+<<<<<<< HEAD
   "homepage": "https://ngocnhi10011999.github.io/API-Redoc/",
+=======
+>>>>>>> 41c8601aa51bfacec7ce7a8dae8ab6cae25b6a5c
   "name": "redoc",
   "version": "2.0.0-rc.56",
   "description": "ReDoc",
