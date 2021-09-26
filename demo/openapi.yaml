@@ -1,0 +1,6012 @@
+swagger: '2.0'
+info:
+  title: MyCloudfly EndUser API
+  description:  |
+    This is a sample server Petstore server.
+    You can find out more about Swagger at
+    [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).
+    For this sample, you can use the api key `special-key` to test the authorization filters.
+    # Introduction
+    This API is documented in **OpenAPI format** and is based on
+    [Petstore sample](http://petstore.swagger.io/) provided by [swagger.io](http://swagger.io) team.
+    It was **extended** to illustrate features of [generator-openapi-repo](https://github.com/Rebilly/generator-openapi-repo)
+    tool and [ReDoc](https://github.com/Redocly/redoc) documentation. In addition to standard
+    OpenAPI syntax we use a few [vendor extensions](https://github.com/Redocly/redoc/blob/master/docs/redoc-vendor-extensions.md).
+      ## Requests
+          <div class="sc-iBzEeX sc-cOifOu dFWqin bHzJuy"></div>
+            <div class="sc-iBzEeX sc-cOifOu dFWqin bHzJuy">
+            	<table class="security-details">
+            	  <tbody>
+                  <tr>
+                    <th> Method </th>
+                    <th> Usage </th>
+                  </tr>
+                  <tr>
+                    <td> DELETE </td>
+                    <td> Use the DELETE method to destroy a resource in your account. If it is not found, the operation will return a 4xx error and an appropriate message. </td>
+                  </tr>
+                  <tr>
+                    <td> GET </td>
+                    <td> To retrieve information about a resource, use the GET method. The data is returned as a JSON object. GET methods are read-only and do not affect any resources. Key </td>
+                  </tr>
+                  <tr>
+                    <td> PATCH </td>
+                    <td> Some resources support partial modification with PATCH, which modifies specific attributes without updating the entire object representation.</td>
+                  </tr>
+                  <tr>
+                    <td> POST </td>
+                    <td> Issue a POST method to create a new object. Include all needed attributes in the request body encoded as JSON.</td>
+                  </tr>
+                  <tr>
+                    <td> PUT </td>
+                    <td> Use the PUT method to update information about a resource. PUT will set new values on the item without regard to their current values.</td>
+                  </tr>
+                </tbody>
+            	</table>
+              <p>
+                <strong>Rate Limit:</strong>
+                Vultr safeguards the API against bursts of incoming traffic based on the request's IP address to ensure stability for all users. If your application sends more than 20 requests per second, the API may return HTTP status code 503.
+              </p>
+            </div>
+          </div>
+
+      ## Response Codes
+          <div class="sc-iBzEeX sc-cOifOu dFWqin bHzJuy"></div>
+            <div class="sc-iBzEeX sc-cOifOu dFWqin bHzJuy">
+            	<table class="security-details">
+                <thead>
+                <tr>
+                <th>Response</th>
+                <th>Description</th>
+                </tr>
+                </thead>
+                <tbody><tr>
+                <td>200 OK</td>
+                <td>The response contains your requested information.</td>
+                </tr>
+                <tr>
+                <td>201 Created</td>
+                <td>Your request was accepted. The resource was created.</td>
+                </tr>
+                <tr>
+                <td>202 Accepted</td>
+                <td>Your request was accepted. The resource was created or updated.</td>
+                </tr>
+                <tr>
+                <td>204 No Content</td>
+                <td>Your request succeeded, there is no additional information returned.</td>
+                </tr>
+                <tr>
+                <td>400 Bad Request</td>
+                <td>Your request was malformed.</td>
+                </tr>
+                <tr>
+                <td>401 Unauthorized</td>
+                <td>You did not supply valid authentication credentials.</td>
+                </tr>
+                <tr>
+                <td>403 Forbidden</td>
+                <td>You are not allowed to perform that action.</td>
+                </tr>
+                <tr>
+                <td>404 Not Found</td>
+                <td>No results were found for your request.</td>
+                </tr>
+                <tr>
+                <td>429 Too Many Requests</td>
+                <td>Your request exceeded the API rate limit.</td>
+                </tr>
+                <tr>
+                <td>500 Internal Server Error</td>
+                <td>We were unable to perform the request due to server-side problems.</td>
+                </tr>
+                </tbody>
+            	</table>
+            </div>
+          </div>
+      
+      ## Meta and Pagination
+        <p>Many API calls will return a <code>meta</code> object with paging information.</p>
+        <h3 id="definitions">Definitions</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>Description</th>
+            </tr>
+            </thead>
+            <tbody><tr>
+            <td>List</td>
+            <td>All items available from your request.</td>
+            </tr>
+            <tr>
+            <td>Page</td>
+            <td>A subset of a List. Choose the size of a Page with the <code>per_page</code> parameter.</td>
+            </tr>
+            <tr>
+            <td>Total</td>
+            <td>The <code>total</code> attribute indicates the number of items in the full List.</td>
+            </tr>
+            <tr>
+            <td>Cursor</td>
+            <td>Use the <code>cursor</code> query parameter to select a next or previous Page.</td>
+            </tr>
+            <tr>
+            <td>Next &amp; Prev</td>
+            <td>Use the <code>next</code> and <code>prev</code> attributes of the <code>links</code> meta object as <code>cursor</code> values.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h3 id="how-to-use-paging">How to use Paging</h3>
+        <blockquote>
+          <p>These examples have abbreviated attributes and sample values. Your actual <code>cursor</code> values will be encoded alphanumeric strings.</p>
+        </blockquote>
+        <p>To return a Page with the first two Plans in the List:</p>
+        <pre><code>curl <span class="token string">"https://api.vultr.com/v2/plans?per_page=2"</span> \
+        <span class="token operator">-</span>X GET \
+        <span class="token operator">-</span>H <span class="token string">"Authorization: Bearer ${VULTR_API_KEY}"</span></code></pre>
+        <p>The API returns an object similar to this:</p>
+        <pre><code><span class="token punctuation">{</span>
+        <span class="token string">"plans"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+            <span class="token punctuation">{</span>
+                <span class="token string">"id"</span><span class="token punctuation">:</span> <span class="token string">"vc2-1c-2gb"</span><span class="token punctuation">,</span>
+                <span class="token string">"vcpu_count"</span><span class="token punctuation">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+                <span class="token string">"ram"</span><span class="token punctuation">:</span> <span class="token number">2048</span><span class="token punctuation">,</span>
+                <span class="token string">"locations"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token punctuation">{</span>
+                <span class="token string">"id"</span><span class="token punctuation">:</span> <span class="token string">"vc2-24c-97gb"</span><span class="token punctuation">,</span>
+                <span class="token string">"vcpu_count"</span><span class="token punctuation">:</span> <span class="token number">24</span><span class="token punctuation">,</span>
+                <span class="token string">"ram"</span><span class="token punctuation">:</span> <span class="token number">98304</span><span class="token punctuation">,</span>
+                <span class="token string">"locations"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+            <span class="token punctuation">}</span>
+            <span class="token punctuation">]</span><span class="token punctuation">,</span>
+            <span class="token string">"meta"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+            <span class="token string">"total"</span><span class="token punctuation">:</span> <span class="token number">19</span><span class="token punctuation">,</span>
+            <span class="token string">"links"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+                <span class="token string">"next"</span><span class="token punctuation">:</span> <span class="token string">"WxYzExampleNext"</span><span class="token punctuation">,</span>
+                <span class="token string">"prev"</span><span class="token punctuation">:</span> <span class="token string">"WxYzExamplePrev"</span>
+            <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span></code></pre>
+        <p>The object contains two plans. The <code>total</code> attribute indicates that 19 plans are available in the List. To navigate forward in the List, use the <code>next</code> value (<strong>WxYzExampleNext</strong> in this example) as your <code>cursor</code> query parameter.</p>
+        <p>Likewise, you can use the example <code>prev</code> value <strong>WxYzExamplePrev</strong> to navigate backward.</p>
+
+      ## Parameters
+        <p>You can pass information to the API with three different types of parameters.</p>
+        <h3 id="path-parameters">Path parameters</h3>
+        <p>Some API calls require variable parameters as part of the endpoint path. For example, to retrieve information about a user, supply the <code>user-id</code> in the endpoint.</p>
+        <h3 id="query-parameters">Query parameters</h3>
+        <p>Some API calls allow filtering with query parameters. For example, the <code>/v2/plans</code> endpoint supports a <code>type</code> query parameter. Setting <code>type=vhf</code> instructs the API only to return High Frequency Compute plans in the list. You'll find more specifics about valid filters in the endpoint documentation below.</p>
+        <pre><code>curl <span class="token string">"https://api.vultr.com/v2/plans?type=vhf"</span> \
+        <span class="token operator">-</span>X GET \
+        <span class="token operator">-</span>H <span class="token string">"Authorization: Bearer ${VULTR_API_KEY}"</span></code></pre>
+        <p>You can also combine filtering with paging. Use the <code>per_page</code> parameter to retreive a subset of vhf plans.</p>
+        <pre><code>curl <span class="token string">"https://api.vultr.com/v2/plans?type=vhf&amp;per_page=2"</span> \
+        <span class="token operator">-</span>X GET \
+        <span class="token operator">-</span>H <span class="token string">"Authorization: Bearer ${VULTR_API_KEY}"</span></code></pre>
+        <h3 id="request-body">Request Body</h3>
+        <p>PUT, POST, and PATCH methods may include an object in the request body with a content type of <strong>application/json</strong>. The documentation for each endpoint below has more information about the expected object.</p>
+
+      ## API Example Conventions
+        <p>The examples in this documentation use <code>curl</code>, a command-line HTTP client, to demonstrate useage. Linux and macOS computers usually have curl installed by default, and it's <a href="https://curl.se/download.html">available for download</a> on all popular platforms including Windows.</p>
+        <p>Each example is split across multiple lines with the <code>\</code> character, which is compatible with a <code>bash</code> terminal. A typical example looks like this:</p>
+        <pre><code>curl <span class="token string">"https://api.vultr.com/v2/domains"</span> \
+        <span class="token operator">-</span>X POST \
+        <span class="token operator">-</span>H <span class="token string">"Authorization: Bearer ${VULTR_API_KEY}"</span> \
+        <span class="token operator">-</span>H <span class="token string">"Content-Type: application/json"</span> \
+        <span class="token operator">--</span>data '<span class="token punctuation">{</span>
+          <span class="token string">"domain"</span> <span class="token punctuation">:</span> <span class="token string">"example.com"</span><span class="token punctuation">,</span>
+          <span class="token string">"ip"</span> <span class="token punctuation">:</span> <span class="token string">"192.0.2.123"</span>
+        <span class="token punctuation">}</span>'</code></pre>
+        <ul>
+          <li>The <code>-X</code> parameter sets the request method. For consistency, we show the method on all examples, even though it's not explicitly required for GET methods.</li>
+          <li>The <code>-H</code> lines set required HTTP headers. These examples are formatted to expand the VULTR_API_KEY environment variable for your convenience.</li>
+          <li>Examples that require a JSON object in the request body pass the required data via the <code>--data</code> parameter.</li>
+        </ul>
+        <p>All values in this guide are examples. Do not rely on the OS or Plan IDs listed in this guide; use the appropriate endpoint to retreive values before creating resources.</p>
+
+  termsOfService: 'https://www.google.com/policies/terms/'
+  contact:
+    email: nhatquang.nv14@gmail.com
+  x-logo:
+    url: 'https://cloudfly.vn/static/assets/images/logo.png'
+    altText: CloudFly logo
+  version: v1
+host: '127.0.0.1:8000'
+schemes:
+  - http
+basePath: /api
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Token:
+    type: apiKey
+    name: Authorization
+    in: header
+    format: JWT
+security:
+  - Token: []
+paths:
+  /auth/get-token/:
+    post:
+      operationId: auth_get-token_create
+      summary: Get token
+      description: Returns a JSON Web Token that can be used for authenticated requests.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EndUserJSONWebToken'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/EndUserJSONWebToken'
+      tags:
+        - Auth
+    parameters: []
+  /domains/:
+    get:
+      operationId: List enduser's domains
+      summary: List domain
+      description: API view that lists domains for enduser
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Domain'
+      tags:
+        - Domains
+    parameters: []
+  /domains/available-for-registration/:
+    post:
+      operationId: Check availability of domain name
+      summary: Check availability of domain name
+      description: >-
+        API view that checks whether a domain available for registration or not
+        by enduser
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CheckDomainAvailable'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CheckDomainAvailable'
+      tags:
+        - Domains
+    parameters: []
+  /domains/calculate-price/:
+    post:
+      operationId: Price register domain
+      summary: Price register domain
+      description: API calculate price register domain
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalculatePrice'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CalculatePrice'
+      tags:
+        - Domains
+    parameters: []
+  /domains/external-domain/:
+    post:
+      operationId: domains_external_domain
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Domain'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Domain'
+      tags:
+        - Domains
+    parameters: []
+  /domains/register/:
+    post:
+      operationId: Register new domain
+      summary: Register new domain
+      description: API view that registers a domain
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RegisterDomain'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RegisterDomain'
+      tags:
+        - Domains
+    parameters: []
+  '/domains/{id}/':
+    get:
+      operationId: Domain details for enduser
+      summary: Domain details
+      description: API view that return domain detail (Cloudfly DB) for enduser
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Domain'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/change-auth-code/':
+    post:
+      operationId: Change domain auth code by end-user
+      summary: Change auth code of domain
+      description: API view that change auth code of domain by end-user
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Domain'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Domain'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/change-password/':
+    post:
+      operationId: Change domain password by end-user
+      summary: Change domain password
+      description: API view that changes domain password by end-user
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Domain'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Domain'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/create-recordset/':
+    post:
+      operationId: Create recordset for domain
+      summary: Create recordset for domain
+      description: API view that creates recordset for a domain
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RecordSetCreate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RecordSetCreate'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/delete-recordset/':
+    post:
+      operationId: Delete Openstack domain recordset
+      summary: Delete Openstack domain recordset
+      description: API view that delete an Openstack domain recordset
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RecordSetDelete'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RecordSetDelete'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/get-detail/':
+    get:
+      operationId: Domain details from INET API
+      summary: Domain details
+      description: API view that return domain details from INET API for end-user
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Domain'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/get-recordset/':
+    post:
+      operationId: Recordset detail
+      summary: Get recordset detail
+      description: API view that gets recordset detail
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RecordSetDetail'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RecordSetDetail'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/recordsets/':
+    get:
+      operationId: Recordset list of domain
+      summary: Recordset list of a domain
+      description: API view that returns recordsets of a domain
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Domain'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/renew/':
+    post:
+      operationId: Renew domain by enduser
+      summary: Renew domain by enduser
+      description: API view that renews domain by enduser
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RenewDomain'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RenewDomain'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/transfer/':
+    post:
+      operationId: Transfer domain by end-user
+      summary: Transfer domain
+      description: API view that transfer domain to new organization by end-user
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Domain'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Domain'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  '/domains/{id}/update-recordset/':
+    post:
+      operationId: Create recordset for domain
+      summary: Create recordset for domain
+      description: API view that creates recordset for a domain
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RecordSetUpdate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RecordSetUpdate'
+      tags:
+        - Domains
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this domain.
+        required: true
+        type: integer
+  /instances/:
+    get:
+      operationId: Instance list
+      summary: List instance
+      description: API View that returns list of openstack instances
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    post:
+      operationId: Create instance
+      summary: Create new instance
+      description: >-
+        Provide the server name, image name, flavor name, network name, root
+        password and ssh keys (optional) to create new instance
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InstanceCreate'
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+        '400':
+          description: Error response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+      x-code-samples:
+        - lang: cURL
+          source: |
+            curl --location --request POST 'my.cloudfly/api/instances/'
+                                --header 'Authorization: <token>'
+                                --header 'Content-Type: application/json'
+                                --data-raw '{
+                                  'instance_name': ['instance_name'],
+                                  'description_name': ['instance_description'],
+                                  'image_name': 'CentOS-7_64bit',
+                                  'flavor_name': '1core-1ram-20gb',
+                                  'cycle_type': 'hourly',
+                                  'multiple_times': 1,
+                                  'quantity': 1,
+                                  'enable_private_network': false
+                                }'
+    parameters: []
+  /instances/csv-summary/:
+    get:
+      operationId: Export instance list to CSV file
+      summary: Export instance to CSV
+      description: API view that export instance list to CSV file
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters: []
+  /instances/packages/:
+    get:
+      operationId: API view returns list of all the flavors
+      summary: List package instance
+      description: ''
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/AvailableFlavorsResponse'
+      tags:
+        - Cloud Server
+    parameters: []
+  /instances/ssh-keys/:
+    get:
+      operationId: SSH keys
+      summary: List SSH keys
+      description: List all SSH Keys in your account.
+      parameters:
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters: []
+  /instances/ssh-keys/add-keypair/:
+    post:
+      operationId: Add key pair
+      summary: Add new SSH key
+      description: Add a new SSH Key for use with future instances.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PublicKeyAdd'
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/PublicKeyResponse'
+        '400':
+          description: Error response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters: []
+  /instances/ssh-keys/generate-keypair/:
+    post:
+      operationId: Generate SSH key
+      summary: Generates new ssh key
+      description: Generate and response secret key for the first time
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PublicKeyGenerate'
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/GeneratePublicKeyResponse'
+        '400':
+          description: Error response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters: []
+  '/instances/ssh-keys/{id}/':
+    delete:
+      operationId: Delete SSH keys
+      summary: Delete SSH key
+      description: API View that delete SSH keys
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this public key.
+        required: true
+        type: integer
+  '/instances/{id}/':
+    get:
+      operationId: Instance detail
+      summary: Detail instance
+      description: API View that returns detail of a instance
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/InstanceDetail'
+      tags:
+        - Cloud Server
+    delete:
+      operationId: Delete instance
+      summary: Delete instance
+      description: API delete instance
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/action-logs/':
+    get:
+      operationId: API view that return action logs for end-user
+      summary: Action logs
+      description: Action logs for end-user
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/add-security-group/':
+    post:
+      operationId: Add security group to instance
+      summary: Add security group to instance
+      description: API view that adds security group to an instance
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AddSecurityGroup'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/AddSecurityGroup'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/attach-interface/':
+    post:
+      operationId: Attach interface to instance by end-user
+      summary: Attaches interface (network)
+      description: Attach interface to instance by end-user
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AttachInterface'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/AttachInterface'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/automatically-add-ips/':
+    post:
+      operationId: Add new IP to instance by end-user
+      summary: Add new IP to instance
+      description: API view that automatically add IPs to Instance
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AutomaticallyAddIps'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/AutomaticallyAddIps'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/available-packages/':
+    get:
+      operationId: Available flavors list
+      summary: List the flavors resize
+      description: >-
+        API view returns list of all the flavors that can be used to resize this
+        instance 
+      parameters: []
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/AvailableFlavorsResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/backup-server/':
+    get:
+      operationId: Backup schedule detail for end-user
+      summary: Backup schedule detail
+      description: Backup schedule detail for end-user
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/BackupSchedule'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/backups/':
+    get:
+      operationId: Backup list for end-user
+      summary: List all backups of an instance
+      description: List backups of an instance for end-user
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Image'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/boot-from-iso/':
+    post:
+      operationId: Boot instance from iso
+      summary: API view that boots instance from iso
+      description: Boot instance from iso
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/BootFromIso'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/BootFromIso'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/calculate-ips-price/':
+    post:
+      operationId: Add new IP to instance by end-user
+      summary: Add new IP to instance
+      description: API view that calculate price for add IPs to Instance
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AutomaticallyAddIps'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/AutomaticallyAddIps'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/calculate-renew-price/':
+    post:
+      operationId: instances_calculate_renew_price
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalculateRenewPrice'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CalculateRenewPrice'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/calculate-upgrade-price/':
+    post:
+      operationId: instances_calculate_upgrade_price
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InstanceResize'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/InstanceResize'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/change-password/':
+    post:
+      operationId: Change instance password
+      summary: Change instance root password
+      description: API view that change instance root password
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InstanceChangePassword'
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+        '400':
+          description: Error response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/create-backup/':
+    get:
+      operationId: Create instance backup
+      summary: Creates instance backup
+      description: Create instance backup
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/InstanceBackupCreate'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/create-snapshot/':
+    post:
+      operationId: Create snapshot
+      summary: Create snapshot for instance
+      description: API view using for creating instance snapshot
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InstanceSnapshotCreate'
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+      x-code-samples:
+        - lang: cURL
+          source: >
+
+            curl --location --request POST
+            'my.cloudfly/api/instances/id/create-snapshot/'
+
+            --header 'Authorization: <token>'
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/detach-interface/':
+    post:
+      operationId: Detach interface from instance by end-user
+      summary: Detach interface from instance
+      description: >-
+        API view that detaches an interface (network) from an instance by
+        end-user
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DetachInterface'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/DetachInterface'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/get-console/':
+    get:
+      operationId: Get console url
+      summary: Get instance console url
+      description: API view using to get active instance console url
+      parameters: []
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+        '400':
+          description: Error response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/get-interface/':
+    post:
+      operationId: Server interface detail for end-user
+      summary: Server interface detail
+      description: API view that returns server interface detail for end-user
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InterfaceDetail'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/InterfaceDetail'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/interfaces/':
+    get:
+      operationId: List server interfaces for end-user
+      summary: List server interfaces
+      description: API view that returns list of server interfaces for end-user
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/ip-addresses/':
+    get:
+      operationId: IP address list of an instance for end-user
+      summary: IP address list of an instance
+      description: API View that returns IP addresses of an instance for end-user
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/measures/':
+    get:
+      operationId: Metrics for an instance
+      summary: Metrics for an instance
+      description: API view that returns metrics for an instance
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/pause-instance/':
+    get:
+      operationId: Pause instance
+      summary: Pausing instance
+      description: 'Pausing instance, change instance''s status from ACTIVE to PAUSED'
+      parameters: []
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/reboot/':
+    post:
+      operationId: Reboot instance
+      summary: Reboot instance
+      description: API view that reboots instance
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Instance'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/rebuild-server/':
+    post:
+      operationId: Rebuild instance
+      summary: API view that rebuild instance
+      description: Change or reboot image
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InstanceRebuild'
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+        '400':
+          description: Error response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/recreate/':
+    get:
+      operationId: instances_recreate
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/remove-security-group/':
+    post:
+      operationId: Remove security group from server
+      summary: Remove security group from server
+      description: API view that removes security group from server
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RemoveSecurityGroup'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RemoveSecurityGroup'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/rename/':
+    post:
+      operationId: Rename instance
+      summary: Rename instance
+      description: API view using for rename instance
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InstanceRename'
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+        '400':
+          description: Error response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+      x-code-samples:
+        - lang: cURL
+          source: >
+            curl --location --request POST
+            'my.cloudfly/api/instances/<id>/rename/'
+                                        --header 'Authorization: <token>'
+                                        --header 'Content-Type: application/json'
+                                        --data-raw '{
+                                          'name': 'new instance_name'
+                                        }'
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/renew/':
+    post:
+      operationId: Renew instance
+      summary: Renew instance
+      description: API view using for renew instance
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InstanceRenew'
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+        '400':
+          description: Error response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/rescue/':
+    post:
+      operationId: Rescue instance
+      summary: Rescue instance
+      description: API view that rescues instance
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InstanceRescue'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/InstanceRescue'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/resize/':
+    post:
+      operationId: Resize instance
+      summary: API view that resizes instance
+      description: Resize instance to greater than flavor
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InstanceResize'
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/AvailableFlavorsResponse'
+      tags:
+        - Cloud Server
+      x-code-samples:
+        - lang: cURL
+          source: >
+            curl --location --request POST
+            'my.cloudfly/api/instances/<id>/resize/'
+                                    --header 'Authorization: <token>'
+                                    --header 'Content-Type: application/json'
+                                    --data-raw '{
+                                       'flavor_name': '1core-2ram-20gb'
+                                    }'
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/reverse-dns/':
+    get:
+      operationId: Reverse DNS of a server
+      summary: Reverse DNS of a server
+      description: API view that return reverse dns of a server
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/security-group-rules/':
+    get:
+      operationId: Fetch server security group rules
+      summary: Fetch server security group rules
+      description: >-
+        API view that fetches security group rules associated with a server
+        (info from Openstack)
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/security-groups/':
+    get:
+      operationId: Security group list of server
+      summary: Security groups list of server
+      description: API view that return security groups of a server
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/show-password/':
+    get:
+      operationId: Show instance root password
+      summary: Show root password
+      description: API view that returns root password of instance
+      parameters: []
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/snapshots/':
+    get:
+      operationId: Snapshot list for end-user
+      summary: List all snapshots of an instance
+      description: List snapshots of an instance for end-user
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Image'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/start-instance/':
+    get:
+      operationId: Start instance
+      summary: Start instance
+      description: 'Start instance, change instance''s status from STOPPED to ACTIVE'
+      parameters: []
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/stop-instance/':
+    get:
+      operationId: Shutdown instance
+      summary: Shutdown instance
+      description: 'Shutdown instance, change instance''s status from ACTIVE to STOPPED'
+      parameters: []
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/summary/':
+    get:
+      operationId: Instance summary for client
+      summary: Instance summary
+      description: API view that returns instance summary for client
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/InstanceSummary'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/toggle-auto-renew/':
+    get:
+      operationId: instances_toggle_auto_renew
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/unpause-instance/':
+    get:
+      operationId: Unpause instance
+      summary: Unpause instance
+      description: 'Unpausing instance, change instance''s status from PAUSED to ACTIVE'
+      parameters: []
+      responses:
+        '200':
+          description: Successfully response
+          schema:
+            $ref: '#/definitions/APIResponse'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/unrescue/':
+    get:
+      operationId: Unrescue instance
+      summary: API view that unrescues instance
+      description: Unrescue instance
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Instance'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  '/instances/{id}/update-reverse-dns/':
+    post:
+      operationId: Create reverse recordset for an IP address
+      summary: Create reverse recordset for an IP address
+      description: API view that creates reverse recordset for an IP address
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ReverseRecordSetUpdate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/ReverseRecordSetUpdate'
+      tags:
+        - Cloud Server
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this instance.
+        required: true
+        type: string
+  /loadbalancers/:
+    get:
+      operationId: List load balancer
+      summary: List load balancer
+      description: API View that returns list all load balancer
+      parameters:
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/LoadBalancer'
+      tags:
+        - Load Balancers
+    post:
+      operationId: Create load balancer
+      summary: Create load balancer
+      description: API create new load balancer
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateLoadBalancer'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CreateLoadBalancer'
+      tags:
+        - Load Balancers
+      x-code-samples:
+        - lang: cURL
+          source: |
+            curl --location --request POST 'my.cloudfly/api/loadbalancers/'
+                                    --header 'Authorization: <token>'
+                                    --header 'Content-Type: application/json'
+                                    --data-raw '{
+                                        "load_balancer_name": "lb_test1",
+                                        "load_balancer_description": "Test create LB",
+                                        "listener_name": "listener_name",
+                                        "listener_description": "listener_description",
+                                        "pool_name": "pool_name",
+                                        "lb_algorithm": "ROUND_ROBIN",
+                                        "pool_member_name": ["pool_member_name"],
+                                        "address_ip": ["192.168.1.215"],
+                                        "pool_member_weight": [1],
+                                        "quantity_pool_member": 1,
+                                        "monitor_timeout": 5,
+                                        "monitor_type": "HTTP",
+                                        "pool_member_port": [80],
+                                        "pool_description": "pool_description",
+                                        "admin_state_up": true,
+                                        "tags": [],
+                                        "protocol": "HTTP",
+                                        "protocol_port": 80,
+                                        "ssl_key": "",
+                                        "cycle_type": "monthly",
+                                        "multiple_times": 1,
+                                        "package_name": "Package 1"
+                                    }'
+    parameters: []
+  /loadbalancers/calculate-register/:
+    post:
+      operationId: Calculate price register
+      summary: Calculate price register
+      description: API calculate price before register LoadBalancer
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalculatePriceLB'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CalculatePriceLB'
+      tags:
+        - Load Balancers
+    parameters: []
+  /loadbalancers/calculate-renew/:
+    post:
+      operationId: Calculate price register
+      summary: Calculate price renew
+      description: API calculate price before renew LoadBalancer
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalculatePriceLB'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CalculatePriceLB'
+      tags:
+        - Load Balancers
+    parameters: []
+  '/loadbalancers/listeners/l7-policies/{id}/':
+    get:
+      operationId: L7Policy detail
+      summary: API View that returns detail of a l7 policy
+      description: L7Policy detail
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/L7Policy'
+      tags:
+        - Load Balancers
+    put:
+      operationId: loadbalancers_listeners_l7-policies_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateL7Policy'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UpdateL7Policy'
+      tags:
+        - Load Balancers
+    delete:
+      operationId: loadbalancers_listeners_l7-policies_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb l7 policy.
+        required: true
+        type: string
+  '/loadbalancers/listeners/l7-policies/{id}/rules/':
+    post:
+      operationId: loadbalancers_listeners_l7-policies_rules
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/L7PolicyRules'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/L7PolicyRules'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb l7 policy.
+        required: true
+        type: string
+  '/loadbalancers/listeners/l7-policies/{id}/rules/{rule_id}/':
+    post:
+      operationId: Update LBL7PolicyRule
+      summary: API update rules of l7 policy
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateL7PolicyRule'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/UpdateL7PolicyRule'
+      tags:
+        - Load Balancers
+    delete:
+      operationId: loadbalancers_listeners_l7-policies_rules_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb l7 policy.
+        required: true
+        type: string
+      - name: rule_id
+        in: path
+        required: true
+        type: string
+  '/loadbalancers/listeners/{id}/':
+    get:
+      operationId: Listener detail
+      summary: API View that returns detail of a listener
+      description: Listener detail
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/LBListenerDetail'
+      tags:
+        - Load Balancers
+    delete:
+      operationId: loadbalancers_listeners_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb listener.
+        required: true
+        type: string
+  '/loadbalancers/listeners/{id}/assignee-pool/':
+    post:
+      operationId: Assign LBPool
+      summary: API assign group server for listener
+      description: The group server used by listener if no L7 polices math
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AssigneePool'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/AssigneePool'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb listener.
+        required: true
+        type: string
+  '/loadbalancers/listeners/{id}/change-ssl-certificate/':
+    post:
+      operationId: loadbalancers_listeners_change_ssl
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ChangeSSL'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/ChangeSSL'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb listener.
+        required: true
+        type: string
+  '/loadbalancers/listeners/{id}/l7-policies/':
+    post:
+      operationId: loadbalancers_listeners_l7_policy
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateL7Policy'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CreateL7Policy'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb listener.
+        required: true
+        type: string
+  '/loadbalancers/listeners/{id}/rename/':
+    post:
+      operationId: loadbalancers_listeners_rename
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Rename'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Rename'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb listener.
+        required: true
+        type: string
+  /loadbalancers/packages/:
+    get:
+      operationId: List all package
+      summary: List all package
+      description: API show all package of LoadBalancer
+      parameters:
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/LoadBalancerPackage'
+      tags:
+        - Load Balancers
+    parameters: []
+  '/loadbalancers/pools/{id}/':
+    get:
+      operationId: Pool detail
+      summary: API View that returns detail of a pool
+      description: Pool detail
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/LBPool'
+      tags:
+        - Load Balancers
+    put:
+      operationId: Update Group
+      summary: API update info of group
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateLBPool'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UpdateLBPool'
+      tags:
+        - Load Balancers
+    patch:
+      operationId: loadbalancers_pools_partial_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LBPool'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/LBPool'
+      tags:
+        - Load Balancers
+    delete:
+      operationId: loadbalancers_pools_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb pool.
+        required: true
+        type: string
+  '/loadbalancers/pools/{id}/members/':
+    post:
+      operationId: loadbalancers_pools_pool_member
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateLBPoolMembers'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CreateLBPoolMembers'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb pool.
+        required: true
+        type: string
+  '/loadbalancers/pools/{id}/members/{member_id}/':
+    post:
+      operationId: Update LBPoolMember
+      summary: API update member of group
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UpdatePoolMember'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/UpdatePoolMember'
+      tags:
+        - Load Balancers
+    delete:
+      operationId: loadbalancers_pools_members_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb pool.
+        required: true
+        type: string
+      - name: member_id
+        in: path
+        required: true
+        type: string
+  '/loadbalancers/pools/{id}/update-monitor/':
+    put:
+      operationId: Update Health monitor
+      summary: API update health monitor for group
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LBMonitor'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/LBMonitor'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this lb pool.
+        required: true
+        type: string
+  /loadbalancers/ssl-certification/:
+    get:
+      operationId: loadbalancers_ssl-certification_read
+      description: ''
+      parameters:
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: ordering
+          in: query
+          description: Which field to use when ordering the results.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/SSLCertification'
+      tags:
+        - Load Balancers
+    post:
+      operationId: loadbalancers_ssl-certification_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SSLCertification'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/SSLCertification'
+      tags:
+        - Load Balancers
+    parameters: []
+  '/loadbalancers/{id}/':
+    get:
+      operationId: LoadBalancer detail
+      summary: Load balancer detail
+      description: API View that returns detail of a load balancer
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/LoadBalancerDetail'
+      tags:
+        - Load Balancers
+    delete:
+      operationId: Delete load balancer
+      summary: Delete load balancer
+      description: API delete load balancer
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this load balancer.
+        required: true
+        type: string
+  '/loadbalancers/{id}/available-package/':
+    get:
+      operationId: loadbalancers_get_available_package
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/LoadBalancer'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this load balancer.
+        required: true
+        type: string
+  '/loadbalancers/{id}/calculate-resize-price/':
+    post:
+      operationId: Calculate price register
+      summary: Calculate price resize
+      description: API calculate price before resize LoadBalancer
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalculatePriceResizeLB'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CalculatePriceResizeLB'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this load balancer.
+        required: true
+        type: string
+  '/loadbalancers/{id}/listeners/':
+    post:
+      operationId: Create LBListener
+      summary: Create listener
+      description: API create listener for LB
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateListener'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CreateListener'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this load balancer.
+        required: true
+        type: string
+  '/loadbalancers/{id}/pools/':
+    post:
+      operationId: Create LB Pool
+      summary: Create pool
+      description: API create group server and health monitor
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateLBPool'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CreateLBPool'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this load balancer.
+        required: true
+        type: string
+  '/loadbalancers/{id}/recreate/':
+    post:
+      operationId: loadbalancers_recreate
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoadBalancer'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/LoadBalancer'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this load balancer.
+        required: true
+        type: string
+  '/loadbalancers/{id}/rename/':
+    post:
+      operationId: loadbalancers_rename
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Rename'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Rename'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this load balancer.
+        required: true
+        type: string
+  '/loadbalancers/{id}/renew/':
+    post:
+      operationId: loadbalancers_renew
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RenewLoadBalancer'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RenewLoadBalancer'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this load balancer.
+        required: true
+        type: string
+  '/loadbalancers/{id}/resize/':
+    post:
+      operationId: Resize load balancer
+      summary: Resize load balancer
+      description: API resize load balancer
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CalculatePriceResizeLB'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CalculatePriceResizeLB'
+      tags:
+        - Load Balancers
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this load balancer.
+        required: true
+        type: string
+  /networks/:
+    get:
+      operationId: Network list
+      summary: API View that returns list of openstack networks
+      description: Paginated networks list
+      parameters:
+        - name: shared
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Network'
+      tags:
+        - Networks
+    post:
+      operationId: networks_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Network'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Network'
+      tags:
+        - Networks
+    parameters: []
+  /networks/create-private-network/:
+    post:
+      operationId: Create private network for end-user
+      summary: API view that creates private network for end-user
+      description: Create private network for end-user
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PrivateNetworkCreate'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/PrivateNetworkCreate'
+      tags:
+        - Networks
+    parameters: []
+  /networks/enable-private-network/:
+    get:
+      operationId: Enable private network for end-user
+      summary: API view that enable private network for end-user
+      description: Enable private network for end-user
+      parameters:
+        - name: shared
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Network'
+      tags:
+        - Networks
+    parameters: []
+  /networks/has-private-network/:
+    get:
+      operationId: Check if project has private network
+      summary: API view that checks if project has private network
+      description: Check if project has private network
+      parameters:
+        - name: shared
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Network'
+      tags:
+        - Networks
+    parameters: []
+  /networks/os-networks/:
+    get:
+      operationId: networks_os_networks
+      description: ''
+      parameters:
+        - name: shared
+          in: query
+          description: ''
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: A search term.
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Network'
+      tags:
+        - Networks
+    parameters: []
+  '/networks/{id}/':
+    get:
+      operationId: Network detail
+      summary: API View that returns detail of a network
+      description: Network detail
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Network'
+      tags:
+        - Networks
+    put:
+      operationId: networks_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NetworkUpdate'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/NetworkUpdate'
+      tags:
+        - Networks
+    delete:
+      operationId: networks_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Networks
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this network.
+        required: true
+        type: string
+  '/networks/{id}/subnets/':
+    get:
+      operationId: Subnet list of a network
+      summary: API view that return subnet list of a network for end-user
+      description: Subnet list of a network for end-user
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/SubnetQuery'
+      tags:
+        - Networks
+    parameters:
+      - name: id
+        in: path
+        description: A unique value identifying this network.
+        required: true
+        type: string
+  /users/details/:
+    get:
+      operationId: users_user_detail
+      summary: User detail
+      description: ''
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return per page.
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The initial index from which to return the results.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Client'
+      tags:
+        - Users
+    parameters: []
+definitions:
+  EndUserJSONWebToken:
+    required:
+      - email
+      - password
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        minLength: 1
+  TLD:
+    title: Tld
+    required:
+      - name
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 65
+        minLength: 1
+      whois_server_configured:
+        title: Whois server configured
+        type: boolean
+        readOnly: true
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        readOnly: true
+      premium_domains_available:
+        title: Premium domains available
+        type: boolean
+      edit_options:
+        title: Edit options
+        type: string
+      requires_epp_for_transfer:
+        title: Requires epp for transfer
+        type: boolean
+      register_product:
+        title: Register product
+        type: integer
+        x-nullable: true
+      transfer_product:
+        title: Transfer product
+        type: integer
+        x-nullable: true
+      renew_product:
+        title: Renew product
+        type: integer
+        x-nullable: true
+  Domain:
+    required:
+      - name
+    type: object
+    properties:
+      id:
+        title: Id
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      status_display:
+        title: Status display
+        type: string
+        readOnly: true
+      tld:
+        $ref: '#/definitions/TLD'
+      name:
+        title: Name
+        type: string
+        maxLength: 256
+        minLength: 1
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        readOnly: true
+      status:
+        title: Status
+        type: string
+        maxLength: 100
+        minLength: 1
+      registration_datetime:
+        title: Registration datetime
+        type: string
+        format: date-time
+        x-nullable: true
+      expiry_datetime:
+        title: Expiry datetime
+        type: string
+        format: date-time
+        x-nullable: true
+      registration_period:
+        title: Registration period
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      auth_code:
+        title: Auth code
+        type: string
+        maxLength: 255
+        x-nullable: true
+      openstack_zone_id:
+        title: Openstack zone id
+        type: string
+        maxLength: 36
+        x-nullable: true
+      is_external:
+        title: Is external
+        type: boolean
+      service:
+        title: Service
+        type: integer
+        x-nullable: true
+      assigned_to_service:
+        title: Assigned to service
+        type: integer
+        x-nullable: true
+      contacts:
+        type: array
+        items:
+          type: integer
+        uniqueItems: true
+  CheckDomainAvailable:
+    required:
+      - domain_name
+    type: object
+    properties:
+      domain_name:
+        title: Domain name
+        type: string
+        minLength: 1
+  CalculatePrice:
+    required:
+      - domain_name
+    type: object
+    properties:
+      domain_name:
+        title: Domain name
+        type: string
+        minLength: 1
+      period:
+        title: Period
+        type: integer
+        default: 1
+  RegisterDomain:
+    required:
+      - name
+      - period
+      - contacts
+      - organization
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 256
+        minLength: 1
+      period:
+        title: Period
+        type: integer
+      contacts:
+        type: array
+        items:
+          type: integer
+        uniqueItems: true
+      customer_id:
+        title: Customer id
+        type: integer
+        default: 0
+        x-nullable: true
+      organization:
+        title: Organization
+        type: boolean
+  RecordSetCreate:
+    required:
+      - name
+      - type
+      - records
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        x-nullable: true
+      type:
+        title: Type
+        type: string
+        enum:
+          - A
+          - AAAA
+          - MX
+          - NS
+          - PTR
+          - CNAME
+          - SPF
+          - SRV
+          - SSHFP
+          - TXT
+      records:
+        type: array
+        items:
+          title: Records
+          type: string
+          maxLength: 255
+          minLength: 1
+        maxItems: 1000
+      ttl:
+        title: Ttl
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+  RecordSetDelete:
+    required:
+      - recordset_id
+    type: object
+    properties:
+      recordset_id:
+        title: Recordset id
+        type: string
+        minLength: 1
+  RecordSetDetail:
+    required:
+      - recordset_id
+    type: object
+    properties:
+      recordset_id:
+        title: Recordset id
+        type: string
+        minLength: 1
+  RenewDomain:
+    type: object
+    properties:
+      period:
+        title: Period
+        type: integer
+        default: 1
+  RecordSetUpdate:
+    required:
+      - records
+      - recordset_id
+    type: object
+    properties:
+      description:
+        title: Description
+        type: string
+        x-nullable: true
+      records:
+        type: array
+        items:
+          title: Records
+          type: string
+          maxLength: 255
+          minLength: 1
+        maxItems: 1000
+      ttl:
+        title: Ttl
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      recordset_id:
+        title: Recordset id
+        type: string
+        minLength: 1
+  Currency:
+    title: Currency
+    required:
+      - code
+    type: object
+    properties:
+      code:
+        title: Code
+        type: string
+        enum:
+          - AED
+          - AFN
+          - ALL
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BZD
+          - CAD
+          - CDF
+          - CHF
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CUP
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - EUR
+          - FJD
+          - FKP
+          - GBP
+          - GEL
+          - GHS
+          - GIP
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IQD
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LBP
+          - LKR
+          - LRD
+          - LSL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - NZD
+          - OMR
+          - PAB
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RON
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - SVC
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TMT
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UGX
+          - USD
+          - UYU
+          - UZS
+          - VEF
+          - VND
+          - VUV
+          - WST
+          - XAF
+          - XAG
+          - XAU
+          - XBA
+          - XBB
+          - XBC
+          - XBD
+          - XCD
+          - XDR
+          - XOF
+          - XPD
+          - XPF
+          - XPT
+          - XSU
+          - XTS
+          - XUA
+          - XXX
+          - YER
+          - ZAR
+          - ZMW
+          - ZWL
+      rate:
+        title: Rate
+        type: string
+        format: decimal
+      is_default:
+        title: Is default
+        type: boolean
+  FlavorBillingPlan:
+    required:
+      - currency
+    type: object
+    properties:
+      display_name:
+        title: Display name
+        type: string
+        maxLength: 255
+      currency:
+        $ref: '#/definitions/Currency'
+      price_per_month:
+        title: Price per month
+        type: string
+        format: decimal
+      price_per_hour:
+        title: Price per hour
+        type: string
+        readOnly: true
+      price_per_year:
+        title: Price per year
+        type: string
+        readOnly: true
+      display_value:
+        title: Display value
+        type: string
+        readOnly: true
+  SmallFlavor:
+    title: Flavor
+    required:
+      - name
+      - memory_mb
+      - flavor_billing_plan
+    type: object
+    properties:
+      id:
+        title: Random id
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      memory_gb:
+        title: Memory gb
+        type: string
+        readOnly: true
+      description:
+        title: Description
+        type: string
+        maxLength: 1024
+      memory_mb:
+        title: Memory mb
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      vcpus:
+        title: Vcpus
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      swap:
+        title: Swap
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      root_gb:
+        title: Root gb
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+      is_public:
+        title: Is public
+        type: boolean
+      flavor_billing_plan:
+        type: array
+        items:
+          $ref: '#/definitions/FlavorBillingPlan'
+      available_for:
+        title: Available for
+        description: >-
+          Set this flavor available for: ALL, LINUX, WINDOWS, .... Upper case
+          and separated by comma
+        type: string
+        maxLength: 100
+        minLength: 1
+      trial_available:
+        title: Trial available
+        type: boolean
+      bandwidth:
+        title: Bandwidth
+        type: string
+        maxLength: 255
+        x-nullable: true
+  SmallImage:
+    title: Image
+    required:
+      - id
+      - min_disk
+      - min_ram
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        x-nullable: true
+      type:
+        title: Type
+        type: string
+        maxLength: 11
+      status:
+        title: Status
+        type: string
+        maxLength: 14
+        x-nullable: true
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        x-nullable: true
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        x-nullable: true
+      min_disk:
+        title: Min disk
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      min_ram:
+        title: Min ram
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      container_format:
+        title: Container format
+        type: string
+        maxLength: 10
+        x-nullable: true
+      thumbnail:
+        title: Thumbnail
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
+      os_type:
+        title: Os type
+        type: string
+        maxLength: 20
+        x-nullable: true
+      visibility:
+        title: Visibility
+        type: string
+        maxLength: 10
+        x-nullable: true
+  Instance:
+    required:
+      - id
+      - flavor
+      - image
+      - region
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      flavor:
+        $ref: '#/definitions/SmallFlavor'
+      image:
+        $ref: '#/definitions/SmallImage'
+      ports:
+        title: Ports
+        type: string
+        readOnly: true
+      resource_organization:
+        title: Resource organization
+        type: string
+        readOnly: true
+      username:
+        title: Username
+        type: string
+        readOnly: true
+      display_name:
+        title: Display name
+        type: string
+        readOnly: true
+      region:
+        title: Region
+        type: string
+        maxLength: 128
+        minLength: 1
+      user_id:
+        title: User id
+        type: string
+        maxLength: 255
+        x-nullable: true
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        maxLength: 255
+        x-nullable: true
+      addresses:
+        title: Addresses
+        type: string
+        x-nullable: true
+      accessIPv4:
+        title: AccessIPv4
+        type: string
+        minLength: 1
+        x-nullable: true
+      accessIPv6:
+        title: AccessIPv6
+        type: string
+        minLength: 1
+        x-nullable: true
+      hostId:
+        title: HostId
+        type: string
+        maxLength: 255
+        x-nullable: true
+      host_name:
+        title: Host name
+        type: string
+        maxLength: 255
+        x-nullable: true
+      key_name:
+        title: Key name
+        type: string
+        maxLength: 255
+        x-nullable: true
+      config_drive:
+        title: Config drive
+        type: boolean
+      availability_zone:
+        title: Availability zone
+        type: string
+        maxLength: 255
+        x-nullable: true
+      auto_disk_config:
+        title: Auto disk config
+        type: boolean
+      power_state:
+        title: Power state
+        type: integer
+        maximum: 32767
+        minimum: -32768
+      task_state:
+        title: Task state
+        type: string
+        maxLength: 255
+        x-nullable: true
+      vm_state:
+        title: Vm state
+        type: string
+        maxLength: 255
+        x-nullable: true
+      created:
+        title: Created
+        type: string
+        format: date-time
+        x-nullable: true
+      launched_at:
+        title: Launched at
+        type: string
+        format: date-time
+        x-nullable: true
+      updated:
+        title: Updated
+        type: string
+        format: date-time
+        readOnly: true
+      terminated_at:
+        title: Terminated at
+        type: string
+        format: date-time
+        x-nullable: true
+      security_groups:
+        title: Security groups
+        type: string
+        x-nullable: true
+      status:
+        title: Status
+        type: string
+        maxLength: 255
+        minLength: 1
+      host_status:
+        title: Host status
+        type: string
+        maxLength: 255
+        x-nullable: true
+      fault:
+        title: Fault
+        type: string
+        x-nullable: true
+      extra:
+        title: Extra
+        type: string
+        x-nullable: true
+      locked:
+        title: Locked
+        type: boolean
+      sync_version:
+        title: Sync version
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      booted_from_iso:
+        title: Booted from iso
+        type: boolean
+      current_month_traffic:
+        title: Current month traffic
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      current_month_traffic_mb:
+        title: Current month traffic mb
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      current_month_incoming:
+        title: Current month incoming
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      current_month_incoming_mb:
+        title: Current month incoming mb
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      current_month_outgoing:
+        title: Current month outgoing
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      current_month_outgoing_mb:
+        title: Current month outgoing mb
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      stopped_by_fleio:
+        title: Stopped by fleio
+        type: boolean
+      project:
+        title: Project
+        type: string
+        x-nullable: true
+  InstanceCreate:
+    required:
+      - image_name
+      - flavor_name
+      - cycle_type
+    type: object
+    properties:
+      instance_name:
+        description: Instance Hostname
+        type: array
+        items:
+          type: string
+      description_name:
+        description: Instance Label
+        type: array
+        items:
+          type: string
+      passwords:
+        description: Instance Password
+        type: array
+        items:
+          type: string
+      image_name:
+        title: Image name
+        type: string
+        minLength: 1
+      flavor_name:
+        title: Flavor name
+        type: string
+        minLength: 1
+      password:
+        title: Instance root password
+        type: string
+        maxLength: 32
+        minLength: 8
+      ssh_key_ids:
+        description: List of ssh key ids
+        type: array
+        items:
+          type: integer
+      cycle_type:
+        title: Cycle type
+        type: string
+        enum:
+          - hourly
+          - monthly
+          - yearly
+          - trial
+      multiple_times:
+        title: Multiple times
+        type: integer
+        default: 1
+      quantity:
+        title: Quantity
+        type: integer
+        default: 1
+        maximum: 10
+      backup_type:
+        title: Backup type
+        type: string
+      enable_private_network:
+        title: Enable private network
+        type: boolean
+        default: false
+  APIResponse:
+    required:
+      - messages
+    type: object
+    properties:
+      success:
+        title: Success
+        type: boolean
+        default: false
+      messages:
+        type: array
+        items:
+          type: string
+          minLength: 1
+      error_code:
+        title: Error code
+        type: integer
+        default: 0
+      data:
+        title: Data
+        type: object
+        additionalProperties:
+          type: string
+        default: {}
+  AvailableFlavorsResponse:
+    required:
+      - messages
+      - data
+    type: object
+    properties:
+      success:
+        title: Success
+        type: boolean
+        default: false
+      messages:
+        type: array
+        items:
+          type: string
+          minLength: 1
+      error_code:
+        title: Error code
+        type: integer
+        default: 0
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/SmallFlavor'
+  PublicKeyAdd:
+    required:
+      - name
+      - public_key
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 32
+        minLength: 1
+      public_key:
+        title: Public key
+        type: string
+        maxLength: 17408
+        minLength: 1
+  PublicKey:
+    title: Data
+    required:
+      - name
+      - public_key
+    type: object
+    properties:
+      id:
+        title: Random id
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      name:
+        title: Name
+        type: string
+        maxLength: 32
+        minLength: 1
+      public_key:
+        title: Public key
+        type: string
+        maxLength: 17408
+        minLength: 1
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      fingerprint:
+        title: Fingerprint
+        type: string
+        maxLength: 128
+        x-nullable: true
+  PublicKeyResponse:
+    required:
+      - messages
+      - data
+    type: object
+    properties:
+      success:
+        title: Success
+        type: boolean
+        default: false
+      messages:
+        type: array
+        items:
+          type: string
+          minLength: 1
+      error_code:
+        title: Error code
+        type: integer
+        default: 0
+      data:
+        $ref: '#/definitions/PublicKey'
+  PublicKeyGenerate:
+    required:
+      - name
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 32
+        minLength: 1
+  GeneratedPublicKeySerializerExtend:
+    title: Data
+    required:
+      - secret_key
+      - name
+      - public_key
+    type: object
+    properties:
+      id:
+        title: Random id
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      secret_key:
+        title: Secret key
+        type: string
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        maxLength: 32
+        minLength: 1
+      public_key:
+        title: Public key
+        type: string
+        maxLength: 17408
+        minLength: 1
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      fingerprint:
+        title: Fingerprint
+        type: string
+        maxLength: 128
+        x-nullable: true
+  GeneratePublicKeyResponse:
+    required:
+      - messages
+      - data
+    type: object
+    properties:
+      success:
+        title: Success
+        type: boolean
+        default: false
+      messages:
+        type: array
+        items:
+          type: string
+          minLength: 1
+      error_code:
+        title: Error code
+        type: integer
+        default: 0
+      data:
+        $ref: '#/definitions/GeneratedPublicKeySerializerExtend'
+  ExtraSmallFlavor:
+    title: Flavor
+    required:
+      - name
+      - memory_mb
+    type: object
+    properties:
+      id:
+        title: Random id
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        minLength: 1
+      memory_gb:
+        title: Memory gb
+        type: string
+        readOnly: true
+      description:
+        title: Description
+        type: string
+        maxLength: 1024
+      memory_mb:
+        title: Memory mb
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      vcpus:
+        title: Vcpus
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      swap:
+        title: Swap
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      root_gb:
+        title: Root gb
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+      bandwidth:
+        title: Bandwidth
+        type: string
+        maxLength: 255
+        x-nullable: true
+  InstanceDetail:
+    required:
+      - flavor
+      - image
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        readOnly: true
+        minLength: 1
+      flavor:
+        $ref: '#/definitions/ExtraSmallFlavor'
+      image:
+        $ref: '#/definitions/SmallImage'
+      resource_organization:
+        title: Resource organization
+        type: string
+        readOnly: true
+      display_name:
+        title: Display name
+        type: string
+        readOnly: true
+      region:
+        title: Region
+        type: string
+        readOnly: true
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        readOnly: true
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        readOnly: true
+        minLength: 1
+      addresses:
+        title: Addresses
+        type: string
+        readOnly: true
+      accessIPv4:
+        title: AccessIPv4
+        type: string
+        readOnly: true
+        minLength: 1
+      accessIPv6:
+        title: AccessIPv6
+        type: string
+        readOnly: true
+        minLength: 1
+      hostId:
+        title: HostId
+        type: string
+        readOnly: true
+        minLength: 1
+      host_name:
+        title: Host name
+        type: string
+        readOnly: true
+        minLength: 1
+      power_state:
+        title: Power state
+        type: integer
+        readOnly: true
+      vm_state:
+        title: Vm state
+        type: string
+        readOnly: true
+        minLength: 1
+      created:
+        title: Created
+        type: string
+        format: date-time
+        readOnly: true
+      launched_at:
+        title: Launched at
+        type: string
+        format: date-time
+        readOnly: true
+      updated:
+        title: Updated
+        type: string
+        format: date-time
+        readOnly: true
+      status:
+        title: Status
+        type: string
+        readOnly: true
+        minLength: 1
+      username:
+        title: Username
+        type: string
+        readOnly: true
+      current_month_incoming:
+        title: Current month incoming
+        type: integer
+        readOnly: true
+      current_month_incoming_mb:
+        title: Current month incoming mb
+        type: integer
+        readOnly: true
+      current_month_outgoing:
+        title: Current month outgoing
+        type: integer
+        readOnly: true
+      current_month_outgoing_mb:
+        title: Current month outgoing mb
+        type: integer
+        readOnly: true
+      current_month_traffic:
+        title: Current month traffic
+        type: integer
+        readOnly: true
+      current_month_traffic_mb:
+        title: Current month traffic mb
+        type: integer
+        readOnly: true
+  AddSecurityGroup:
+    required:
+      - security_group_id
+    type: object
+    properties:
+      security_group_id:
+        title: Security group id
+        type: string
+        maxLength: 36
+        minLength: 36
+  AttachInterface:
+    required:
+      - network_id
+    type: object
+    properties:
+      network_id:
+        title: Network id
+        type: string
+        minLength: 1
+  AutomaticallyAddIps:
+    type: object
+    properties:
+      quantity:
+        title: Quantity
+        type: integer
+        default: 1
+  BackupSchedule:
+    required:
+      - instance
+      - backup_name
+      - backup_type
+    type: object
+    properties:
+      id:
+        title: Id
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      instance:
+        title: Instance
+        type: string
+      backup_name:
+        title: Backup name
+        type: string
+        maxLength: 32
+        minLength: 1
+      backup_type:
+        title: Backup type
+        type: string
+        enum:
+          - daily
+          - weekly
+          - monthly
+          - manual
+          - daily-weekly
+      rotation:
+        title: Rotation
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      run_at:
+        title: Run at
+        type: string
+        format: date-time
+        x-nullable: true
+  Image:
+    required:
+      - id
+      - min_disk
+      - min_ram
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      size_in_mb:
+        title: Size in mb
+        type: string
+        readOnly: true
+      size_in_gb:
+        title: Size in gb
+        type: string
+        readOnly: true
+      type:
+        title: Type
+        type: string
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        x-nullable: true
+      owner:
+        title: Owner
+        type: string
+        maxLength: 255
+        x-nullable: true
+      status:
+        title: Status
+        type: string
+        maxLength: 14
+        x-nullable: true
+      size:
+        title: Size
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+        x-nullable: true
+      virtual_size:
+        title: Virtual size
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+        x-nullable: true
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        x-nullable: true
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        x-nullable: true
+      deleted_at:
+        title: Deleted at
+        type: string
+        format: date-time
+        x-nullable: true
+      os_distro:
+        title: Os distro
+        type: string
+        maxLength: 30
+        x-nullable: true
+      hypervisor_type:
+        title: Hypervisor type
+        type: string
+        maxLength: 32
+        x-nullable: true
+      os_type:
+        title: Os type
+        type: string
+        maxLength: 20
+        x-nullable: true
+      os_version:
+        title: Os version
+        type: string
+        maxLength: 16
+        x-nullable: true
+      architecture:
+        title: Architecture
+        type: string
+        maxLength: 32
+        x-nullable: true
+      min_disk:
+        title: Min disk
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      min_ram:
+        title: Min ram
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      protected:
+        title: Protected
+        type: boolean
+      visibility:
+        title: Visibility
+        type: string
+        maxLength: 10
+        x-nullable: true
+      container_format:
+        title: Container format
+        type: string
+        maxLength: 10
+        x-nullable: true
+      disk_format:
+        title: Disk format
+        type: string
+        maxLength: 10
+        x-nullable: true
+      properties:
+        title: Properties
+        type: string
+        x-nullable: true
+      tags:
+        title: Tags
+        type: string
+        x-nullable: true
+      hw_qemu_guest_agent:
+        title: Hw qemu guest agent
+        type: boolean
+      instance_uuid:
+        title: Instance uuid
+        type: string
+        maxLength: 36
+        x-nullable: true
+      volume_snapshot_uuid:
+        title: Volume snapshot uuid
+        type: string
+        maxLength: 36
+        x-nullable: true
+      sync_version:
+        title: Sync version
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      thumbnail:
+        title: Thumbnail
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
+      user_data:
+        title: User data
+        type: string
+        x-nullable: true
+      is_default:
+        title: Is default
+        type: boolean
+      region:
+        title: Region
+        type: string
+        x-nullable: true
+      project:
+        title: Project
+        type: string
+        x-nullable: true
+      flavor_groups:
+        type: array
+        items:
+          type: integer
+        uniqueItems: true
+      flavors:
+        type: array
+        items:
+          type: integer
+        uniqueItems: true
+  BootFromIso:
+    required:
+      - image
+    type: object
+    properties:
+      image:
+        title: Image
+        type: string
+        maxLength: 36
+        minLength: 1
+  CalculateRenewPrice:
+    required:
+      - cycle_type
+    type: object
+    properties:
+      cycle_type:
+        title: Cycle type
+        type: string
+        enum:
+          - hourly
+          - monthly
+          - yearly
+          - trial
+      multiple_times:
+        title: Multiple times
+        type: integer
+        default: 1
+      backup_type:
+        title: Backup type
+        type: string
+      backup_only:
+        title: Backup only
+        type: boolean
+        default: false
+  InstanceResize:
+    required:
+      - flavor_name
+    type: object
+    properties:
+      flavor_name:
+        title: Flavor name
+        type: string
+        minLength: 1
+  InstanceChangePassword:
+    required:
+      - admin_password
+    type: object
+    properties:
+      admin_password:
+        title: Admin password
+        type: string
+        maxLength: 32
+        minLength: 1
+  InstanceBackupCreate:
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        x-nullable: true
+      backup_type:
+        title: Backup type
+        type: string
+        default: weekly
+        minLength: 1
+  InstanceSnapshotCreate:
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        x-nullable: true
+  DetachInterface:
+    required:
+      - interface_id
+    type: object
+    properties:
+      interface_id:
+        title: Interface id
+        type: string
+        minLength: 1
+  InterfaceDetail:
+    required:
+      - interface_id
+    type: object
+    properties:
+      interface_id:
+        title: Interface id
+        type: string
+        minLength: 1
+  InstanceRebuild:
+    required:
+      - image_id
+    type: object
+    properties:
+      instance_name:
+        title: Instance name
+        type: string
+        minLength: 1
+      image_id:
+        title: Image id
+        type: string
+        minLength: 1
+      ssh_key_ids:
+        description: List of ssh key ids
+        type: array
+        items:
+          type: integer
+  RemoveSecurityGroup:
+    required:
+      - security_group_id
+    type: object
+    properties:
+      security_group_id:
+        title: Security group id
+        type: string
+        maxLength: 36
+        minLength: 36
+  InstanceRename:
+    required:
+      - name
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        minLength: 1
+  InstanceRenew:
+    required:
+      - cycle_type
+    type: object
+    properties:
+      cycle_type:
+        title: Cycle type
+        type: string
+        enum:
+          - hourly
+          - monthly
+          - yearly
+          - trial
+      multiple_times:
+        title: Multiple times
+        type: integer
+        default: 1
+      backup_type:
+        title: Backup type
+        type: string
+      backup_only:
+        title: Backup only
+        type: boolean
+        default: false
+  InstanceRescue:
+    required:
+      - image
+    type: object
+    properties:
+      image:
+        title: Image
+        type: string
+        maxLength: 36
+        minLength: 1
+  InstanceSummary:
+    required:
+      - id
+      - region
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      image:
+        title: Image
+        type: string
+        readOnly: true
+      memory:
+        title: Memory
+        type: string
+        readOnly: true
+      flavor:
+        title: Flavor
+        type: string
+        readOnly: true
+      vcpus:
+        title: Vcpus
+        type: string
+        readOnly: true
+      total_traffic_in_cycle:
+        title: Total traffic in cycle
+        type: string
+        readOnly: true
+      total_traffic_in_month:
+        title: Total traffic in month
+        type: string
+        readOnly: true
+      project:
+        title: Project
+        type: string
+        readOnly: true
+      created:
+        title: Created
+        type: string
+        format: date-time
+        x-nullable: true
+      client:
+        title: Client
+        type: string
+        readOnly: true
+      region:
+        title: Region
+        type: string
+        minLength: 1
+  ReverseRecordSetUpdate:
+    required:
+      - reverse_dns
+      - ip_address
+    type: object
+    properties:
+      reverse_dns:
+        title: Reverse dns
+        type: string
+        maxLength: 255
+        minLength: 1
+      ip_address:
+        title: Ip address
+        type: string
+        minLength: 1
+  LoadBalancer:
+    required:
+      - id
+      - vip_port_id
+      - vip_subnet_id
+      - vip_network_id
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        maxLength: 100
+        x-nullable: true
+      vip_address:
+        title: Vip address
+        type: string
+        minLength: 1
+        x-nullable: true
+      provisioning_status:
+        title: Provisioning status
+        type: string
+        maxLength: 50
+        x-nullable: true
+      operating_status:
+        title: Operating status
+        type: string
+        maxLength: 50
+        x-nullable: true
+      resource_organization:
+        title: Resource organization
+        type: string
+        readOnly: true
+      vip_port_id:
+        title: Vip port id
+        type: string
+        maxLength: 36
+        minLength: 1
+      vip_subnet_id:
+        title: Vip subnet id
+        type: string
+        maxLength: 36
+        minLength: 1
+      vip_network_id:
+        title: Vip network id
+        type: string
+        maxLength: 36
+        minLength: 1
+      tags:
+        title: Tags
+        type: string
+  CreateLoadBalancer:
+    required:
+      - cycle_type
+      - package_name
+      - lb_algorithm
+      - quantity_pool_member
+      - monitor_type
+      - protocol
+      - protocol_port
+    type: object
+    properties:
+      cycle_type:
+        title: Cycle type
+        type: string
+        enum:
+          - hourly
+          - monthly
+          - yearly
+          - trial
+      multiple_times:
+        title: Multiple times
+        type: integer
+        default: 1
+      package_name:
+        title: Package name
+        type: string
+        minLength: 1
+      load_balancer_name:
+        title: Load balancer name
+        type: string
+        maxLength: 100
+        minLength: 1
+      load_balancer_description:
+        title: Load balancer description
+        type: string
+        maxLength: 100
+      listener_name:
+        title: Listener name
+        type: string
+        maxLength: 100
+        minLength: 1
+      listener_description:
+        title: Listener description
+        type: string
+        maxLength: 100
+        minLength: 1
+      pool_name:
+        title: Pool name
+        type: string
+        maxLength: 100
+        minLength: 1
+      lb_algorithm:
+        title: Lb algorithm
+        type: string
+        maxLength: 20
+        minLength: 1
+      pool_member_name:
+        type: array
+        items:
+          type: string
+          maxLength: 100
+          minLength: 1
+      address_ip:
+        type: array
+        items:
+          type: string
+          minLength: 1
+      pool_member_weight:
+        type: array
+        items:
+          type: integer
+          default: 1
+      pool_member_port:
+        type: array
+        items:
+          type: integer
+          default: 80
+      quantity_pool_member:
+        title: Quantity pool member
+        type: integer
+        maximum: 50
+      monitor_timeout:
+        title: Monitor timeout
+        type: integer
+      monitor_max_retries:
+        title: Monitor max retries
+        type: integer
+      monitor_http_method:
+        title: Monitor http method
+        type: string
+        enum:
+          - GET
+          - CONNECT
+          - DELETE
+          - HEAD
+          - OPTIONS
+          - PATCH
+          - POST
+          - PUT
+          - TRACE
+        default: GET
+      monitor_delay:
+        title: Monitor delay
+        type: integer
+        default: 3
+      monitor_url_path:
+        title: Monitor url path
+        type: string
+        default: /
+        minLength: 1
+      monitor_expected_codes:
+        title: Monitor expected codes
+        type: string
+        default: '200'
+        minLength: 1
+      monitor_type:
+        title: Monitor type
+        type: string
+        maxLength: 20
+        minLength: 1
+      pool_description:
+        title: Pool description
+        type: string
+        maxLength: 100
+        minLength: 1
+      admin_state_up:
+        title: Admin state up
+        type: boolean
+        default: true
+      tags:
+        type: array
+        items:
+          type: string
+          maxLength: 10
+          minLength: 1
+      protocol:
+        title: Protocol
+        description: 'Protocol: HTTP, HTTPS, TCP, UDP'
+        type: string
+        maxLength: 20
+        minLength: 1
+      protocol_port:
+        title: Protocol port
+        type: integer
+      tls_container_ref:
+        title: Tls container ref
+        type: string
+        maxLength: 100
+        x-nullable: true
+  CalculatePriceLB:
+    required:
+      - cycle_type
+      - package_name
+    type: object
+    properties:
+      cycle_type:
+        title: Cycle type
+        type: string
+        enum:
+          - hourly
+          - monthly
+          - yearly
+          - trial
+      multiple_times:
+        title: Multiple times
+        type: integer
+        default: 1
+      package_name:
+        title: Package name
+        type: string
+        minLength: 1
+  LoadBalancerBillingPlan:
+    required:
+      - currency
+    type: object
+    properties:
+      display_name:
+        title: Display name
+        type: string
+        maxLength: 255
+      currency:
+        $ref: '#/definitions/Currency'
+      price_per_month:
+        title: Price per month
+        type: string
+        format: decimal
+      price_per_hour:
+        title: Price per hour
+        type: string
+        readOnly: true
+      price_per_year:
+        title: Price per year
+        type: string
+        readOnly: true
+      display_value:
+        title: Display value
+        type: string
+        readOnly: true
+  LoadBalancerPackage:
+    required:
+      - name
+      - loadbalancer_billing_plan
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        minLength: 1
+      connection_limit_ssl:
+        title: Connection limit ssl
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+      loadbalancer_billing_plan:
+        type: array
+        items:
+          $ref: '#/definitions/LoadBalancerBillingPlan'
+  SSLCertification:
+    required:
+      - id
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 40
+        minLength: 1
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 20
+        x-nullable: true
+      secret_refs:
+        title: Secret refs
+        type: string
+      common_name:
+        title: Common name
+        type: string
+        maxLength: 50
+        x-nullable: true
+      ref:
+        title: Ref
+        type: string
+        maxLength: 100
+        x-nullable: true
+      expires:
+        title: Expires
+        type: string
+        format: date-time
+        x-nullable: true
+  LoadBalancerDetail:
+    required:
+      - id
+      - vip_port_id
+      - vip_subnet_id
+      - vip_network_id
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        maxLength: 100
+        x-nullable: true
+      vip_address:
+        title: Vip address
+        type: string
+        minLength: 1
+        x-nullable: true
+      provisioning_status:
+        title: Provisioning status
+        type: string
+        maxLength: 50
+        x-nullable: true
+      operating_status:
+        title: Operating status
+        type: string
+        maxLength: 50
+        x-nullable: true
+      vip_port_id:
+        title: Vip port id
+        type: string
+        maxLength: 36
+        minLength: 1
+      vip_subnet_id:
+        title: Vip subnet id
+        type: string
+        maxLength: 36
+        minLength: 1
+      vip_network_id:
+        title: Vip network id
+        type: string
+        maxLength: 36
+        minLength: 1
+      listeners:
+        title: Listeners
+        type: string
+        readOnly: true
+      pools:
+        title: Pools
+        type: string
+        readOnly: true
+      tags:
+        title: Tags
+        type: string
+  CalculatePriceResizeLB:
+    required:
+      - package_name
+    type: object
+    properties:
+      package_name:
+        title: Package name
+        type: string
+        maxLength: 20
+        minLength: 1
+  CreateListener:
+    required:
+      - protocol
+      - protocol_port
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        maxLength: 100
+        x-nullable: true
+      protocol:
+        title: Protocol
+        type: string
+        maxLength: 20
+        minLength: 1
+      protocol_port:
+        title: Protocol port
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      tags:
+        type: array
+        items:
+          type: string
+          maxLength: 100
+          minLength: 1
+          x-nullable: true
+        x-nullable: true
+      default_tls_container_ref:
+        title: Default tls container ref
+        type: string
+        maxLength: 200
+        x-nullable: true
+  CreateLBPool:
+    required:
+      - protocol
+      - lb_algorithm
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 50
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        maxLength: 100
+        x-nullable: true
+      protocol:
+        title: Protocol
+        type: string
+        maxLength: 10
+        minLength: 1
+      lb_algorithm:
+        title: Lb algorithm
+        type: string
+        maxLength: 20
+        minLength: 1
+      monitor_type:
+        title: Monitor type
+        type: string
+        default: HTTP
+        minLength: 1
+      monitor_delay:
+        title: Monitor delay
+        type: integer
+        default: 5
+      monitor_expected_codes:
+        title: Monitor expected codes
+        description: >-
+          A single value, such as 200 | A list, such as 200, 202 | A range, such
+          as 200-204
+        type: string
+        default: '200'
+        minLength: 1
+      monitor_http_method:
+        title: Monitor http method
+        type: string
+        enum:
+          - GET
+          - CONNECT
+          - DELETE
+          - HEAD
+          - OPTIONS
+          - PATCH
+          - POST
+          - PUT
+          - TRACE
+        default: GET
+      monitor_max_retries:
+        title: Monitor max retries
+        type: integer
+        default: 3
+      monitor_max_retries_down:
+        title: Monitor max retries down
+        type: integer
+        default: 3
+      monitor_timeout:
+        title: Monitor timeout
+        description: >-
+          The maximum time, in seconds, that a monitor waits to connect before
+          it times out. This value must be less than the delay value. 
+        type: integer
+        default: 5
+      monitor_url_path:
+        title: Monitor url path
+        type: string
+        default: /
+        minLength: 1
+      name_members:
+        description: list name of group member
+        type: array
+        items:
+          type: string
+          maxLength: 20
+          minLength: 1
+      addresses:
+        description: list address ip of group member
+        type: array
+        items:
+          type: string
+          minLength: 1
+      protocol_port:
+        description: list protocol port of group member
+        type: array
+        items:
+          type: integer
+      weights:
+        description: 'list weight of group member '
+        type: array
+        items:
+          type: integer
+  Rename:
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        minLength: 1
+      description:
+        title: Description
+        type: string
+  RenewLoadBalancer:
+    required:
+      - cycle_type
+    type: object
+    properties:
+      cycle_type:
+        title: Cycle type
+        type: string
+        enum:
+          - hourly
+          - monthly
+          - yearly
+          - trial
+      multiple_times:
+        title: Multiple times
+        type: integer
+        default: 1
+  UpdatePoolMember:
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        minLength: 1
+      weight:
+        title: Weight
+        type: integer
+  UpdateLBPool:
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+  CreateL7Policy:
+    required:
+      - action
+      - compare_types
+      - types
+      - values
+      - inverts
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        maxLength: 100
+        x-nullable: true
+      action:
+        title: Action
+        type: string
+        maxLength: 20
+        minLength: 1
+      redirect_url:
+        title: Redirect url
+        description: Required if action is REDIRECT_TO_URL
+        type: string
+        format: uri
+        x-nullable: true
+      redirect_prefix:
+        title: Redirect prefix
+        description: Required if action is REDIRECT_PREFIX
+        type: string
+        format: uri
+        x-nullable: true
+      redirect_pool_id:
+        title: Redirect pool id
+        description: 'Required if action is REDIRECT_TO_POOL, select a id of group server'
+        type: string
+        x-nullable: true
+      position:
+        title: Position
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+      compare_types:
+        type: array
+        items:
+          type: string
+          enum:
+            - CONTAINS
+            - ENDS_WITH
+            - EQUAL_TO
+            - REGEX
+            - STARTS_WITH
+      types:
+        type: array
+        items:
+          type: string
+          enum:
+            - PATH
+            - FILE_TYPE
+            - SSL_VERIFY_RESULT
+            - HEADER
+            - SSL_CONN_HAS_CERT
+            - HOST_NAME
+            - COOKIE
+            - SSL_DN_FIELD
+      values:
+        type: array
+        items:
+          description: The value to use for the comparison. Ex '/images*'
+          type: string
+          minLength: 1
+      inverts:
+        type: array
+        items:
+          type: boolean
+          default: false
+  ChangeSSL:
+    required:
+      - ref
+    type: object
+    properties:
+      ref:
+        title: Ref
+        description: Select other ref SSL
+        type: string
+        minLength: 1
+  AssigneePool:
+    required:
+      - pool_id
+    type: object
+    properties:
+      pool_id:
+        title: Pool id
+        type: string
+        maxLength: 40
+        minLength: 1
+  LBListenerDetail:
+    required:
+      - id
+      - protocol
+      - protocol_port
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      pool:
+        title: Pool
+        type: string
+        readOnly: true
+      protocol:
+        title: Protocol
+        type: string
+        maxLength: 20
+        minLength: 1
+      protocol_port:
+        title: Protocol port
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      operating_status:
+        title: Operating status
+        type: string
+        maxLength: 50
+        x-nullable: true
+      provisioning_status:
+        title: Provisioning status
+        type: string
+        maxLength: 20
+        minLength: 1
+      ssl_certificate:
+        title: Ssl certificate
+        type: string
+        readOnly: true
+      client_authentication:
+        title: Client authentication
+        type: string
+        enum:
+          - NONE
+          - OPTIONAL
+          - MANDATORY
+        x-nullable: true
+      l7policies:
+        title: L7policies
+        type: string
+        readOnly: true
+      timeout_client_data:
+        title: Timeout client data
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+      timeout_member_connect:
+        title: Timeout member connect
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+      timeout_member_data:
+        title: Timeout member data
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+  L7PolicyRules:
+    required:
+      - compare_types
+      - types
+      - values
+      - inverts
+    type: object
+    properties:
+      compare_types:
+        type: array
+        items:
+          type: string
+          enum:
+            - CONTAINS
+            - ENDS_WITH
+            - EQUAL_TO
+            - REGEX
+            - STARTS_WITH
+      types:
+        type: array
+        items:
+          type: string
+          enum:
+            - PATH
+            - FILE_TYPE
+            - SSL_VERIFY_RESULT
+            - HEADER
+            - SSL_CONN_HAS_CERT
+            - HOST_NAME
+            - COOKIE
+            - SSL_DN_FIELD
+      values:
+        type: array
+        items:
+          description: The value to use for the comparison. Ex '/images*'
+          type: string
+          minLength: 1
+      inverts:
+        type: array
+        items:
+          type: boolean
+          default: false
+  L7Policy:
+    required:
+      - id
+      - action
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      action:
+        title: Action
+        type: string
+        maxLength: 20
+        minLength: 1
+      position:
+        title: Position
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+      redirect_url:
+        title: Redirect url
+        type: string
+        maxLength: 200
+        x-nullable: true
+      redirect_prefix:
+        title: Redirect prefix
+        type: string
+        maxLength: 200
+        x-nullable: true
+      redirect_pool_id:
+        title: Redirect pool id
+        type: string
+        readOnly: true
+      provisioning_status:
+        title: Provisioning status
+        type: string
+        maxLength: 100
+        x-nullable: true
+      operating_status:
+        title: Operating status
+        type: string
+        maxLength: 100
+        x-nullable: true
+      rules:
+        title: Rules
+        type: string
+        readOnly: true
+  UpdateL7Policy:
+    required:
+      - action
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        maxLength: 100
+        x-nullable: true
+      tags:
+        title: Tags
+        type: string
+      action:
+        title: Action
+        type: string
+        maxLength: 20
+        minLength: 1
+      redirect_url:
+        title: Redirect url
+        description: Required if action is REDIRECT_TO_URL
+        type: string
+        format: uri
+        x-nullable: true
+      redirect_prefix:
+        title: Redirect prefix
+        description: Required if action is REDIRECT_PREFIX
+        type: string
+        format: uri
+        x-nullable: true
+      redirect_pool_id:
+        title: Redirect pool id
+        description: 'Required if action is REDIRECT_TO_POOL, select a id of group server'
+        type: string
+        x-nullable: true
+      position:
+        title: Position
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+  UpdateL7PolicyRule:
+    required:
+      - compare_type
+      - type
+      - value
+    type: object
+    properties:
+      compare_type:
+        title: Compare type
+        type: string
+        maxLength: 16
+        minLength: 1
+      type:
+        title: Type
+        type: string
+        maxLength: 20
+        minLength: 1
+      value:
+        title: Value
+        type: string
+        maxLength: 50
+        minLength: 1
+      invert:
+        title: Invert
+        type: boolean
+  LBPool:
+    required:
+      - id
+      - protocol
+      - lb_algorithm
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        maxLength: 50
+        x-nullable: true
+      protocol:
+        title: Protocol
+        type: string
+        maxLength: 10
+        minLength: 1
+      pool_member:
+        title: Pool member
+        type: string
+        readOnly: true
+      healthmonitor:
+        title: Healthmonitor
+        type: string
+        readOnly: true
+      lb_algorithm:
+        title: Lb algorithm
+        type: string
+        maxLength: 20
+        minLength: 1
+      admin_state_up:
+        title: Admin state up
+        type: boolean
+      operating_status:
+        title: Operating status
+        type: string
+        maxLength: 20
+        minLength: 1
+      provisioning_status:
+        title: Provisioning status
+        type: string
+        maxLength: 20
+        minLength: 1
+  CreateLBPoolMembers:
+    required:
+      - names
+      - addresses
+      - protocol_port
+      - weights
+    type: object
+    properties:
+      names:
+        type: array
+        items:
+          type: string
+          maxLength: 20
+          minLength: 1
+      addresses:
+        type: array
+        items:
+          type: string
+          minLength: 1
+      protocol_port:
+        type: array
+        items:
+          type: integer
+      weights:
+        type: array
+        items:
+          type: integer
+  LBMonitor:
+    required:
+      - delay
+      - timeout
+      - type
+      - max_retries
+    type: object
+    properties:
+      delay:
+        title: Delay
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      timeout:
+        title: Timeout
+        description: >-
+          The maximum time, in seconds, that a monitor waits to connect before
+          it times out. This value must be less than the delay value.
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      type:
+        title: Type
+        type: string
+        maxLength: 20
+        minLength: 1
+      expected_codes:
+        title: Expected codes
+        type: string
+        maxLength: 50
+        x-nullable: true
+      max_retries:
+        title: Max retries
+        type: integer
+        maximum: 10
+        minimum: 1
+      max_retries_down:
+        title: Max retries down
+        type: integer
+        maximum: 10
+        minimum: 1
+        x-nullable: true
+      url_path:
+        title: Url path
+        type: string
+        maxLength: 100
+        x-nullable: true
+      http_method:
+        title: Http method
+        type: string
+        maxLength: 10
+        x-nullable: true
+  Network:
+    required:
+      - id
+      - region
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        maxLength: 36
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        maxLength: 255
+      description:
+        title: Description
+        type: string
+        maxLength: 255
+        x-nullable: true
+      region:
+        title: Region
+        type: string
+        maxLength: 128
+        minLength: 1
+      project:
+        title: Project
+        type: string
+        maxLength: 36
+        x-nullable: true
+      shared:
+        title: Shared
+        type: boolean
+      router_external:
+        title: Router external
+        type: boolean
+      is_default:
+        title: Is default
+        type: boolean
+      status:
+        title: Status
+        type: string
+        maxLength: 32
+        minLength: 1
+      admin_state_up:
+        title: Admin state up
+        type: boolean
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      updated_at:
+        title: Updated at
+        type: string
+        format: date-time
+        x-nullable: true
+      sync_version:
+        title: Sync version
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      extra:
+        title: Extra
+        type: string
+        x-nullable: true
+      is_active:
+        title: Is active
+        type: boolean
+      available_ips:
+        title: Available ips
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+        x-nullable: true
+  PrivateNetworkCreate:
+    required:
+      - net_name
+    type: object
+    properties:
+      net_name:
+        title: Net name
+        type: string
+        minLength: 1
+      subnet_name:
+        title: Subnet name
+        type: string
+        minLength: 1
+      cidr:
+        title: Cidr
+        type: string
+        minLength: 1
+      dns_nameservers:
+        type: array
+        items:
+          type: string
+          minLength: 1
+      gateway_ip:
+        title: Gateway ip
+        type: string
+        maxLength: 15
+        minLength: 1
+      allocation_pools:
+        title: Allocation pools
+        type: string
+        maxLength: 32
+        minLength: 1
+      enable_dhcp:
+        title: Enable dhcp
+        type: boolean
+  NetworkUpdate:
+    required:
+      - name
+      - is_admin_state_up
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        minLength: 1
+      is_admin_state_up:
+        title: Is admin state up
+        type: boolean
+  SubnetQuery:
+    type: object
+    properties:
+      cidr:
+        title: Cidr
+        type: string
+        minLength: 1
+      gateway_ip:
+        title: Gateway ip
+        type: string
+        maxLength: 15
+        minLength: 7
+      ip_version:
+        title: Ip version
+        type: string
+        maxLength: 1
+        minLength: 1
+      is_dhcp_enabled:
+        title: Is dhcp enabled
+        type: boolean
+        x-nullable: true
+      name:
+        title: Name
+        type: string
+        minLength: 1
+      subnet_pool_id:
+        title: Subnet pool id
+        type: string
+        minLength: 1
+  Client:
+    type: object
+    properties:
+      id:
+        title: Random id
+        type: integer
+        maximum: 9223372036854776000
+        minimum: -9223372036854776000
+      status:
+        title: Status
+        type: string
+        enum:
+          - active
+          - inactive
+          - suspended
+          - closed
+          - deleting
+      contract_client:
+        title: Contract client
+        type: boolean
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      payment_info:
+        title: Payment info
+        type: string
+        x-nullable: true
+  
