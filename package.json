@@ -1,8 +1,5 @@
 {
-<<<<<<< HEAD
   "homepage": "https://ngocnhi10011999.github.io/API-Redoc/",
-=======
->>>>>>> 41c8601aa51bfacec7ce7a8dae8ab6cae25b6a5c
   "name": "redoc",
   "version": "2.0.0-rc.56",
   "description": "ReDoc",
@@ -33,8 +30,6 @@
   "main": "bundles/redoc.lib.js",
   "types": "typings/index.d.ts",
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "start": "webpack serve --mode=development --env playground --hot --config demo/webpack.config.ts",
     "start:prod": "webpack serve --env playground --mode=production --config demo/webpack.config.ts",
     "start:benchmark": "webpack serve --mode=production --env.bench --config demo/webpack.config.ts",
@@ -60,7 +55,9 @@
     "build:demo": "webpack --mode=production --config demo/webpack.config.ts",
     "deploy:demo": "aws s3 sync demo/dist s3://production-redoc-demo --acl=public-read",
     "license-check": "license-checker --production --onlyAllow 'MIT;ISC;Apache-2.0;BSD;BSD-2-Clause;BSD-3-Clause' --summary",
-    "docker:build": "docker build -f config/docker/Dockerfile -t redoc ."
+    "docker:build": "docker build -f config/docker/Dockerfile -t redoc .",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
